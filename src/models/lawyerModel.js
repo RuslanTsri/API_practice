@@ -1,5 +1,4 @@
 
-
 const generatedNumbers = new Set(); // Зберігаємо використані номери
 let currentId = 1;
 
