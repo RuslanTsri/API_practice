@@ -7,18 +7,28 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors()); // Дозволяє обмін даними між різними доменами (CORS)
+app.use(bodyParser.json()); // Дозволяє працювати з JSON-форматом у запитах
 
-// Головний маршрут
+/**
+ * Головний маршрут
+ * @route GET /
+ * @description Проста відповідь для перевірки роботи API
+ */
 app.get("/", (req, res) => {
     res.send("API працює!");
 });
 
-// Підключення маршрутів (вже з роутами для різних CRUD операцій)
+/**
+ * Підключення маршрутів
+ * @description Використовує маршрути, визначені у файлі lawyerRoutes.js
+ */
 app.use("/", lawyerRoutes);  // Тепер всі маршрути з lawyerRoutes.js будуть працювати
 
-// Запуск сервера
+/**
+ * Запуск сервера
+ * @description Сервер запускається на вказаному порту і прослуховує вхідні запити
+ */
 app.listen(PORT, () => {
     console.log(`Сервер запущено на порті ${PORT}`);
 });

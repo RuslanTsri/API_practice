@@ -2,10 +2,22 @@ import { Lawyer } from "../models/lawyerModel.js";
 
 let lawyers = []; // Тимчасова база даних
 
+/**
+ * @route GET /lawyers
+ * @description Отримання всіх юристів
+ * @access Public
+ */
 export const getLawyers = (req, res) => {
     res.json(lawyers);
 };
 
+/**
+ * @route POST /addLawyer
+ * @description Додавання нового юриста
+ * @access Public
+ * @param req
+ * @param res
+ */
 export const createLawyer = (req, res) => {
     const { first_name, last_name, middle_name, email, contact, experience } = req.body;
 
@@ -21,7 +33,13 @@ export const createLawyer = (req, res) => {
     res.status(201).json(newLawyer);
 };
 
-
+/**
+ * @route GET /lawyer/:id
+ * @description Отримання юриста за його унікальним ID
+ * @access Public
+ * @param req
+ * @param res
+ */
 export const getLawyerById = (req, res) => {
     const { id } = req.params;
     console.log("Знайдений ID:", id); // Логування ID запиту
@@ -35,9 +53,13 @@ export const getLawyerById = (req, res) => {
     res.json(lawyer);
 };
 
-
-
-
+/**
+ * @route PATCH /updateLawyer/:id
+ * @description Оновлення інформації про юриста
+ * @access Public
+ * @param req
+ * @param res
+ */
 export const updateLawyer = (req, res) => {
     const { id } = req.params;
     console.log("Знайдений ID:", id); // Логування ID запиту
@@ -51,20 +73,26 @@ export const updateLawyer = (req, res) => {
     res.json(lawyer);
 };
 
+/**
+ * @route DELETE /deleteLawyer/:id
+ * @description Видалення юриста за його ID
+ * @access Public
+ * @param req
+ * @param res
+ */
 export const deleteLawyer = (req, res) => {
     const { id } = req.params;
     console.log("Знайдений ID:", id); // Логування ID запиту
 
-    const lawyer = lawyers.find(l => l.id === Number(id)); // Знаходимо індекс юриста за ID
+    const lawyerIndex = lawyers.findIndex(l => l.id === Number(id)); // Знаходимо індекс юриста за ID
 
-    if (lawyer === -1) { // Якщо юриста не знайдено
+    if (lawyerIndex === -1) { // Якщо юриста не знайдено
         return res.status(404).json({ error: "Юриста не знайдено" });
     }
 
-    const deletedLawyer = lawyers.splice(lawyer, 1); // Видаляємо юриста з масиву
+    const deletedLawyer = lawyers.splice(lawyerIndex, 1); // Видаляємо юриста з масиву
 
     console.log("Юрист видалений:", deletedLawyer[0]); // Логування видаленого юриста
 
     res.json({ message: "Юрист видалений", deletedLawyer: deletedLawyer[0] });
 };
-

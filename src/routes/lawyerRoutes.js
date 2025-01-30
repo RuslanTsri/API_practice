@@ -3,16 +3,42 @@ import { getLawyers, createLawyer, getLawyerById, updateLawyer, deleteLawyer } f
 
 const router = express.Router();
 
-// Отримання всіх юристів
+/**
+ * @route GET /lawyers
+ * @description Отримання всіх юристів
+ * @access Public
+ */
 router.get("/lawyers", getLawyers);
 
-// Отримання юриста по id
+/**
+ * @route GET /lawyer/:id
+ * @description Отримання юриста за його унікальним ID
+ * @param {string} id - Ідентифікатор юриста
+ * @access Public
+ */
 router.get("/lawyer/:id", getLawyerById);
-// Додавання нового юриста
+
+/**
+ * @route POST /addLawyer
+ * @description Додавання нового юриста
+ * @access Public
+ */
 router.post("/addLawyer", createLawyer);
-// Оновлення інформації про юриста
+
+/**
+ * @route PATCH /updateLawyer/:id
+ * @description Оновлення інформації про юриста
+ * @param {string} id - Ідентифікатор юриста
+ * @access Public
+ */
 router.patch("/updateLawyer/:id", updateLawyer);
-// Видалення юриста
+
+/**
+ * @route DELETE /deleteLawyer/:id
+ * @description Видалення юриста за його ID
+ * @param {string} id - Ідентифікатор юриста
+ * @access Public
+ */
 router.delete("/deleteLawyer/:id", deleteLawyer);
 
 export default router;
