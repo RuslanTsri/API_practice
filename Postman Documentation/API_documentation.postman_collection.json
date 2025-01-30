@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "d52444f2-5539-4427-a8d3-62abdd1d009b",
+		"name": "API_documentation",
+		"description": "Дана документацію розроблена щоб пояснити як використовувати дані CRUD - операції. А точніше який URL вводити  \nGet All Lawyers - [<b>https://localhost:5000/lawyers</b>](https://localhost:5000/lawyers)  \nGet Lawyer By ID - [<b>https://localhost:5000/lawyers/{id}</b>](https://localhost:5000/lawyers/{id}) (Вводите id юриста)  \nPost Lawyer - [<b>https://localhost:5000/addLawyer</b>](https://localhost:5000/addLawyer)  \nPatch Lawyer - [<b>https://localhost:5000/updateLawyer/{id}</b>](https://localhost:5000/updateLawyer/{id})  \nDelete Lawyer - [<b>https://localhost:5000/deleteLawyer/{id}</b>](https://localhost:5000/deleteLawyer/{id})\n\n_**Структура даних:  \n{   \n\"id\": \" \" , //Прописувати не потрібно, автоматично визначається  \n\"first_name\": \" \",   \n\"last_name\": \" \",   \n\"middle_name\": \" \",   \n\"email\": \" \",   \n\"contact\": \" \",   \n\"experience\": \" \",  \n\"UNITE_number\": \" \" //Прописувати не потрібно, визначається автоматично  \n}**_\n\nСервер використовувався з фреймворку Node.js з інструментом автоматичного перезапуску при змінах у файлі nodemon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41659980"
+	},
+	"item": [
+		{
+			"name": "Get All Lawyers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 404\", function () {\r",
+							"  pm.expect(pm.response.code).to.equal(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields\", function () {\r",
+							"    const requiredFields = [\"<!DOCTYPE html>\", \"<html lang=\\\"en\\\">\", \"<head>\", \"<meta charset=\\\"utf-8\\\">\", \"<title>Error</title>\", \"<body>\", \"<pre>Cannot GET /lawyers%0A</pre>\"];\r",
+							"\r",
+							"    const responseData = pm.response.text();\r",
+							"\r",
+							"    requiredFields.forEach(function(field) {\r",
+							"        pm.expect(responseData).to.include(field, `Response should include: ${field}`);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Content type is 'text/html'\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate that the response body follows the HTML schema\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include('<!DOCTYPE html>');\r",
+							"    pm.expect(pm.response.text()).to.include('<html lang=\"en\">');\r",
+							"    pm.expect(pm.response.text()).to.include('<head>');\r",
+							"    pm.expect(pm.response.text()).to.include('<meta charset=\"utf-8\">');\r",
+							"    pm.expect(pm.response.text()).to.include('<title>Error</title>');\r",
+							"    pm.expect(pm.response.text()).to.include('</head>');\r",
+							"    pm.expect(pm.response.text()).to.include('<body>');\r",
+							"    pm.expect(pm.response.text()).to.include('<pre>Cannot GET /lawyers%0A</pre>');\r",
+							"    pm.expect(pm.response.text()).to.include('</body>');\r",
+							"    pm.expect(pm.response.text()).to.include('</html>');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/lawyers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lawyers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Lawyer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_name\": \"John\",\r\n  \"last_name\": \"Doe\",\r\n  \"middle_name\": \"Smith\",\r\n  \"email\": \"john.doe@example.com\",\r\n  \"contact\": \"123456789\",\r\n  \"experience\": \"Lawyer\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/addLawyer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"addLawyer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PATCH Lawyer",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"contact\": \"0636224514\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/updateLawyer/{id}\n",
+					"_comment": "Замість {id} введіть ID Користувача, наприклад 5.",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"updateLawyer",
+						"1\n"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Lawyer",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/deleteLawyer/{:id}\n",
+					"_comment": "Замість {id} введіть ID Користувача, наприклад 5.",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deleteLawyer",
+						"1\n"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Lawyer By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/lawyer/{:id}",
+					"_comment": "Замість {id} введіть ID Користувача, наприклад 5.",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"lawyer",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
