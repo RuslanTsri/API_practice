@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken';
 
 /**
- * Middleware для перевірки ролі
- * @param {Array} allowedRoles - Масив дозволених ролей для доступу
+ * Middleware для перевірки ролі користувача.
+ *
+ * @function checkRole
+ * @param {Array} allowedRoles - Масив дозволених ролей для доступу.
+ * @returns {Function} Middleware-функція для перевірки ролі користувача.
  */
 export const checkRole = (allowedRoles) => {
     return (req, res, next) => {

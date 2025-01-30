@@ -1,15 +1,36 @@
 import express from "express";
-import {registerUser, loginUser, activateAccount} from "../controllers/authController.js";
+import { registerUser, loginUser, activateAccount } from "../controllers/authController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { checkRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-// Реєстрація та логін
+/**
+ * @route POST /register
+ * @description Реєстрація нового користувача
+ * @access Public
+ */
 router.post("/register", registerUser);
+
+/**
+ * @route POST /login
+ * @description Вхід користувача в систему
+ * @access Public
+ */
 router.post("/login", loginUser);
-router.post('/activate', activateAccount);
-// Доступ до даних для користувачів
+
+/**
+ * @route POST /activate
+ * @description Активація облікового запису за допомогою коду активації
+ * @access Public
+ */
+router.post("/activate", activateAccount);
+
+/**
+ * @route GET /lawyer/:id
+ * @description Отримання даних про конкретного юриста
+ * @access Lawyer (лише власні дані)
+ */
 router.get("/lawyer/:id", authMiddleware, checkRole("Lawyer"), (req, res) => {
     if (req.user.userId === req.params.id) {
         // Повернення даних користувача

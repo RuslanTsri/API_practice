@@ -7,12 +7,20 @@ import jwt from "jsonwebtoken"; // Для генерації токенів (п�
 // Масив для тимчасового збереження активаційних кодів (для демонстрації)
 const activationCodes = {};
 
-// Генерація одноразового коду активації
+/**
+ * Генерує одноразовий 6-значний активаційний код
+ * @returns {string} - Згенерований код
+ */
 function generateActivationCode() {
-    return Math.random().toString(36).substr(2, 6).toUpperCase(); // Генерація 6-значного коду
+    return Math.random().toString(36).substr(2, 6).toUpperCase();
 }
 
-// Функція для збереження активаційного коду в HTML-файлі
+/**
+ * Зберігає активаційний код у HTML-файл
+ * @param {string} userEmail - Email користувача
+ * @param {string} activationCode - Активаційний код
+ * @returns {Promise<string>} - Шлях до збереженого файлу
+ */
 async function saveActivationCodeToFile(userEmail, activationCode) {
     const htmlContent = `
 <html lang="ua">
@@ -37,23 +45,20 @@ async function saveActivationCodeToFile(userEmail, activationCode) {
     const currentDir = path.resolve(); // Шлях до поточної директорії
     const filePath = path.join(currentDir, "src", "temp", "acode", `${userEmail}_activation.html`);
 
-    // Створюємо директорію, якщо вона не існує
-    await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-
-    // Записуємо HTML в файл
-    await fs.promises.writeFile(filePath, htmlContent, "utf8");
+    await fs.promises.mkdir(path.dirname(filePath), { recursive: true }); // Створення директорії, якщо не існує
+    await fs.promises.writeFile(filePath, htmlContent, "utf8"); // Запис у файл
 
     return filePath;
 }
 
-/**
- * Реєстрація користувача
- * @param req
- * @param res
- */
+// Масив для збереження користувачів (тимчасово)
 const users = [];
 
-// Реєстрація користувача
+/**
+ * Реєстрація нового користувача
+ * @param {object} req - Запит
+ * @param {object} res - Відповідь
+ */
 export const registerUser = async (req, res) => {
     const { email, password, role } = req.body;
     console.log("Реєстрація користувача: ", email);
@@ -70,88 +75,68 @@ export const registerUser = async (req, res) => {
     const filePath = await saveActivationCodeToFile(email, activationCode);
     console.log("Шлях до активаційного файлу: ", filePath);
 
-    // Додаємо користувача в масив (тимчасово)
-    const newUser = {
-        email,
-        password: hashedPassword, // Зберігаємо хешований пароль
-        isActive: false, // Статус неактивний
-        role: role,
-        activationCode, // Збереження коду активації
-    };
-    users.push(newUser); // Зберігаємо користувача
+    // Додаємо користувача в масив
+    const newUser = { email, password: hashedPassword, isActive: false, role, activationCode };
+    users.push(newUser);
 
-    // Відповідь з посиланням на збережений файл
     res.status(201).json({
         message: "Користувач зареєстрований, перевірте свою пошту для активації.",
-        activationFile: filePath, // Відправляємо шлях до файлу
+        activationFile: filePath,
     });
 };
 
-// Логін користувача
+/**
+ * Авторизація користувача
+ * @param {object} req - Запит
+ * @param {object} res - Відповідь
+ */
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log("Логін користувача: ", email);
 
-    // Знаходимо користувача по email
+    // Пошук користувача
     const user = users.find(user => user.email === email);
     if (!user) {
-        console.log("Користувач не знайдений:", email);
         return res.status(400).json({ message: "Невірний email або пароль" });
     }
 
-    // Перевірка, чи акаунт активовано
+    // Перевірка активації
     if (!user.isActive) {
-        console.log("Акаунт не активовано для користувача:", email);
         return res.status(400).json({ message: "Будь ласка, активуйте акаунт перед входом." });
     }
 
     // Перевірка пароля
-    console.log("Введений пароль: ", password);
-    console.log("Хешований пароль користувача: ", user.password);
-    //Перевірка ролі
-    console.log("Ваша роль:", user.role);
-
-    const isMatch = await bcrypt.compare(password, user.password); // Порівнюємо введений пароль з хешованим
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        console.log("Пароль невірний для користувача:", email);
         return res.status(400).json({ message: "Невірний email або пароль" });
     }
 
-    // Генерація JWT токену з роллю
-    const token = jwt.sign(
-        { userId: user.email, role: user.role },  // Тепер додаємо роль в токен
-        "secretkey",
-        { expiresIn: "1h" }  // Термін дії токену
-    );
-
-    console.log("JWT токен: ", token);
-
+    // Генерація JWT токену
+    const token = jwt.sign({ userId: user.email, role: user.role }, "secretkey", { expiresIn: "1h" });
     res.json({ message: "Логін успішний", token });
 };
 
-
-// Функція для активації акаунту
+/**
+ * Активація акаунту користувача
+ * @param {object} req - Запит
+ * @param {object} res - Відповідь
+ */
 export const activateAccount = (req, res) => {
     const { email, activationCode } = req.body;
 
-    // Знаходимо користувача по email
+    // Пошук користувача
     const user = users.find(user => user.email === email);
     if (!user) {
-        console.log("Користувач не знайдений для активації:", email);
         return res.status(400).json({ message: "Користувача не знайдено" });
     }
 
-    // Перевіряємо правильність коду
+    // Перевірка коду активації
     if (user.activationCode !== activationCode) {
-        console.log("Невірний активаційний код для користувача:", email);
         return res.status(400).json({ message: "Невірний активаційний код" });
     }
 
-    // Активуємо акаунт
+    // Активація акаунту
     user.isActive = true;
-    user.activationCode = undefined; // Видаляємо активаційний код після активації
-
-    console.log("Акаунт активовано для користувача:", email);
-
+    user.activationCode = undefined;
     res.status(200).json({ message: "Акаунт успішно активовано" });
 };
